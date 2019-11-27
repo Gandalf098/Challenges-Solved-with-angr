@@ -19,7 +19,15 @@ p.hook (0x401172 ,non ,length=5)
 p.hook (0x40117a ,non ,length=5)
 
 
+<<<<<<< HEAD
 state = p.factory.call_state(0x401154, add_options={angr.options.unicorn})
+=======
+state = p.factory.call_state(0x401154, add_options=angr.options.unicorn)
+#, angr.options.SYMBOL_FILL_UNCONSTRAINED_MEMORY})
+
+#import IPython;IPython.embed()
+
+>>>>>>> master
 
 state.regs.r12 = 0x3b
 
@@ -60,6 +68,10 @@ cx = []
 
 while True:
 #    if (i % 2 == 0):
+<<<<<<< HEAD
+=======
+    print (state.mem[malloc + i].byte)
+>>>>>>> master
     v = state.memory.make_symbolic('v',malloc + i,1)
 #    v = state.memory.get_unconstrained_bytes ('v', 8 , malloc + i)
     print (v)
