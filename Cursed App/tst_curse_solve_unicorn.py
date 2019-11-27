@@ -18,16 +18,13 @@ argv.append("test")
 p.hook (0x401172 ,non ,length=5)
 p.hook (0x40117a ,non ,length=5)
 
+opt = angr.options.unicorn
+opt = opt.union({angr.options.SYMBOL_FILL_UNCONSTRAINED_MEMORY})
 
-<<<<<<< HEAD
-state = p.factory.call_state(0x401154, add_options={angr.options.unicorn})
-=======
-state = p.factory.call_state(0x401154, add_options=angr.options.unicorn)
+state = p.factory.call_state(0x401154, add_options=opt)
 #, angr.options.SYMBOL_FILL_UNCONSTRAINED_MEMORY})
 
 #import IPython;IPython.embed()
-
->>>>>>> master
 
 state.regs.r12 = 0x3b
 
@@ -47,6 +44,7 @@ while True:
     state = succ.successors[0]
 
 print (state.regs.rax)
+
 malloc = state.regs.rax
 
 while True:
@@ -68,15 +66,12 @@ cx = []
 
 while True:
 #    if (i % 2 == 0):
-<<<<<<< HEAD
-=======
-    print (state.mem[malloc + i].byte)
->>>>>>> master
-    v = state.memory.make_symbolic('v',malloc + i,1)
+#    print (state.mem[malloc + i - 1].char)
+#    v = state.memory.make_symbolic('v',malloc + i,1)
 #    v = state.memory.get_unconstrained_bytes ('v', 8 , malloc + i)
-    print (v)
-    state.add_constraints ( v >= '\x20' )
-    state.add_constraints ( v <= '\x7e' )
+#    print (v)
+    state.add_constraints ( state.mem[malloc + i].char.resolved >= '\x20' )
+    state.add_constraints ( state.mem[malloc + i].char.resolved <= '\x7e' )
     succ = state.step()
     print (state)
     if (state.addr == 0x401f3b):
@@ -87,10 +82,11 @@ while True:
         state = succ.successors[1]
 
 #    if (i % 2 == 1):
-    t = state.solver.eval(v)
+#    t = state.solver.eval(v)
 #	    t = t.chop(8)
-    state.mem[malloc + i].char = t
-    t = chr(t)
+#    state.mem[malloc + i].char = t
+    print (state.mem[malloc + i].char.concrete)
+    t = state.mem[malloc + i].char.concrete.decode()
     print ( "piece : " + t )
     cx . append ( t )
     print (cx)
