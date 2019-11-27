@@ -77,7 +77,7 @@ while True:
 #    if (i % 2 == 1):
     t = state.solver.eval(v)
 #	    t = t.chop(8)
-#    state.mem[malloc + i].char = t
+    state.mem[malloc + i].char = t
     t = chr(t)
     print ( "piece : " + t )
     cx . append ( t )
