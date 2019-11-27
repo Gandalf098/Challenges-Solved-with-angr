@@ -19,6 +19,16 @@ if not ( state.fs.insert('./test', simfile) ):
 
 while True:
     succ = state.step()
+    if (state.addr == 0x40115c):
+        break
+    print (state)
+    state = succ.successors[0]
+
+print (state.regs.rax)
+malloc = state.regs.rax
+
+while True:
+    succ = state.step()
     if (state.addr == 0x40117f):
         break
     print (state)
@@ -29,8 +39,6 @@ while True:
 # for byte in v.chop(8):
 #    state.add_constraints(byte >= '\x20') # ' '
 #    state.add_constraints(byte <= '\x7e') # '~'
-
-import IPython
 
 i = 0
 
@@ -45,7 +53,7 @@ while True:
         state = succ.successors[0]
     else:
         state = succ.successors[1]
-    v = state.memory.make_symbolic('v',0xc0000ff0 + i,1)
+    v = state.memory.make_symbolic('v',malloc + i,1)
     state.add_constraints ( v >= '\x20' )
     state.add_constraints ( v <= '\x7e' )
     t = state.solver.eval(v)
