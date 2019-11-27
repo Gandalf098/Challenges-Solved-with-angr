@@ -19,7 +19,7 @@ p.hook (0x401172 ,non ,length=5)
 p.hook (0x40117a ,non ,length=5)
 
 
-state = p.factory.call_state(0x401154)
+state = p.factory.call_state(0x401154, add_options={angr.options.INITIALIZE_ZERO_REGISTERS})
 
 state.regs.r12 = 0x3b
 
@@ -59,6 +59,12 @@ i = 0
 cx = []
 
 while True:
+#    if (i % 2 == 0):
+    v = state.memory.make_symbolic('v',malloc + i,1)
+#    v = state.memory.get_unconstrained_bytes ('v', 8 , malloc + i)
+    print (v)
+    state.add_constraints ( v >= '\x20' )
+    state.add_constraints ( v <= '\x7e' )
     succ = state.step()
     print (state)
     if (state.addr == 0x401f3b):
@@ -67,15 +73,19 @@ while True:
         state = succ.successors[0]
     else:
         state = succ.successors[1]
-    v = state.memory.make_symbolic('v',malloc + i,1)
-    state.add_constraints ( v >= '\x20' )
-    state.add_constraints ( v <= '\x7e' )
+
+#    if (i % 2 == 1):
     t = state.solver.eval(v)
-    print ( "piece : " + chr (t) )
-    cx . append ( chr(t) )
+#	    t = t.chop(8)
+    state.mem[malloc + i].char = t
+    t = chr(t)
+    print ( "piece : " + t )
+    cx . append ( t )
     print (cx)
     i = i + 1
-    #IPython.embed()
+
+#    print ('i == ' + str(i))
+#    import IPython; IPython.embed()
 
 #state1, state2 = succ.successors
 
@@ -92,3 +102,11 @@ sl = sl.join(cx)
 print (sl)
 
 
+#v = state.memory.make_symbolic('v',malloc,0x3b)
+
+#t = state.solver.eval(v)
+
+#print ( bytearray.fromhex(t[2:]).decode() )
+
+
+import IPython; IPython.embed()
