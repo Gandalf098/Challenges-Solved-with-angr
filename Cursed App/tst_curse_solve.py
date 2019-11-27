@@ -2,6 +2,11 @@ import angr
 import claripy
 
 
+def non(s):
+	pass
+
+
+
 
 #sym_arg_size = 32
 #sym_arg = claripy.BVS('sym_arg', 8*sym_arg_size)
@@ -10,12 +15,21 @@ p = angr.Project("./cursed_app.elf")
 argv = [p.filename]
 argv.append("test")
 
-state = p.factory.entry_state(args=argv)
+p.hook (0x401172 ,non ,length=5)
+p.hook (0x40117a ,non ,length=5)
 
-simfile = angr.SimFile('test',size=0x3b)
 
-if not ( state.fs.insert('./test', simfile) ):
-    print ('error couldn\'t insert simfile ')
+state = p.factory.call_state(0x401154)
+
+state.regs.r12 = 0x3b
+
+state.regs.rbp = 0xf0000000
+
+
+#simfile = angr.SimFile('test',size=0x3b)
+
+#if not ( state.fs.insert('./test', simfile) ):
+#    print ('error couldn\'t insert simfile ')
 
 while True:
     succ = state.step()
